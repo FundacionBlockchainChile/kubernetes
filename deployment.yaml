@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  labels:
+    app: webapp
+spec:
+  replicas: 4  # Actualizamos a 4 réplicas
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: nginxdemos/hello
+        ports:
+        - containerPort: 80  # Exponemos el puerto 80 del contenedor
+        env:
+        - name: ENV
+          valueFrom:
+            configMapKeyRef:
+              name: webapp-config
+              key: ENV
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: webapp-secret
+              key: PASSWORD
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m" 
